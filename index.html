@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>在 Perl 像 PHP 一樣, 於字串裡開洞寫程式</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+      @import url(http://fonts.googleapis.com/css?family=Yanone+Kaffeesatz);
+      @import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic);
+      @import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+      @font-face {
+        font-family: 'tea';
+        src: url(simplified-SentyTEA-Platinum.ttf);
+      };
+
+      body { font-family: 'Droid Serif' }
+      h1 {
+        font-family: 'tea', 'Yanone Kaffeesatz';
+        font-weight: bold;
+      }
+      h2, h3 {
+        font-family: 'Yanone Kaffeesatz';
+        font-weight: normal;
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; font-size: 18px; }
+      .remark-slide-content { font-size: 24px; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+
+class: center, middle
+
+# 在 Perl 像 PHP 一樣
+# 於字串裡開洞寫程式
+
+## Cindy
+2015.11.13
+
+---
+
+# PHP 字串裡開洞
+
+```php
+<h2><?= htmlspecialchars($title) ?></h2>
+<table><tr><th>標題<th>時間
+<?
+    foreach( $data as $row ){
+        ?><tr><?
+        if( $row['public'] ){
+            ?><td><?= htmlspecialchars($row['subject']) ?><?
+            ?><td><?= date('Y.n.j H:i:s', $row['ctime']) ?><?
+        }else{
+            ?><td>N/A<td>N/A<?
+        }
+    }
+?>
+</table>
+```
+
+---
+
+# Perl 字串裡開洞
+
+* 
+```perl
+"abcabcabc"
+```
+
+--
+
+* 
+```perl
+"abc @abc abc"
+```
+
+--
+
+* 
+```perl
+"abc @$abc abc"
+```
+
+--
+
+* 
+```perl
+"abc @{[ 'a' . 'b' . 'c' ]} abc"
+```
+
+--
+
+* 
+```perl
+  "abc @{[do{
+      my $total = 0;
+      for( @data ){
+          $total += $_;
+      }
+      $total;
+  }]} abc"
+```
+
+---
+
+## cgi25/Item.pm sub show\_item\_box\_html:
+
+```perl
+    <<".";
+<table cellspacing=0 cellpadding=0 style='border:1px solid #ccc;padding:2px'>
+@{[do{ my $b = $_->[0]; <<"..";
+    <tr><th style=font-size:larger>狀態資料
+    <tr><td><table width=100% cellspacing=0 border=1>
+        <tr><th>狀態<th>數量<th>幣種<th>價錢<th>折扣<th>附件編號
+        <tr>
+            <td>$b->[0].@{[ { qw( 0 沒有物品 1 正常狀態 2 穿在身上 ) }->{$b->[0]} ]}
+            <td align=right>$b->[1]
+            <td>$b->[2].@{[ { qw( 0 遊戲幣 1 神點 2 公會金 ) }->{$b->[2]} ]}
+            <td align=right>$b->[3]
+            <td align=right>$b->[4]
+            <td align=right>$b->[5]
+        </table>
+..
+}]}
+@{[ do{ my $b = $_->[1]; <<"..";
+    <tr><th style=font-size:larger>基本資料
+    ...
+.
+```
+
+    </textarea>
+    <script src="http://gnab.github.io/remark/downloads/remark-0.5.9.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create({
+        highlightStyle: 'solarized_light'//'kimbie.light'//'docco'//
+      });
+    </script>
+  </body>
+</html>
+
